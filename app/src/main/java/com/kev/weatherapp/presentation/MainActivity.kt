@@ -1,8 +1,8 @@
-package com.kev.weatherapp
+package com.kev.weatherapp.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.viewbinding.BuildConfig
+import com.kev.weatherapp.R
 
 class MainActivity : AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
