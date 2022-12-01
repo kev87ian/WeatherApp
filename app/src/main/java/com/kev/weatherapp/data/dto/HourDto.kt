@@ -2,7 +2,7 @@ package com.kev.weatherapp.data.dto
 
 
 import com.google.gson.annotations.SerializedName
-import com.kev.weatherapp.domain.model.Hour
+import com.kev.weatherapp.domain.model.HourDomainModel
 
 data class HourDto(
 	@SerializedName("chance_of_rain")
@@ -73,8 +73,8 @@ data class HourDto(
 	val windchillF: Double
 )
 
-fun HourDto.toHour(): Hour {
-	return Hour(
+fun HourDto.toHour(): HourDomainModel {
+	return HourDomainModel(
 		time = time,
 		tempC = tempC,
 		condition = condition,

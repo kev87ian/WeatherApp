@@ -2,7 +2,7 @@ package com.kev.weatherapp.data.dto
 
 
 import com.google.gson.annotations.SerializedName
-import com.kev.weatherapp.domain.model.Weather
+import com.kev.weatherapp.domain.model.WeatherDomainModel
 
 data class CurrentWeatherDto(
     @SerializedName("cloud")
@@ -53,8 +53,8 @@ data class CurrentWeatherDto(
     val windMph: Double
 )
 
-fun CurrentWeatherDto.toWeather() : Weather{
-    return Weather(
+fun CurrentWeatherDto.toWeather() : WeatherDomainModel{
+    return WeatherDomainModel(
         tempC = tempC,
         condition = condition,
         isDay = isDay,
