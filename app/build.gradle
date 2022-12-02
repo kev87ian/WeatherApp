@@ -79,4 +79,10 @@ dependencies {
     kapt 'com.google.dagger:hilt-compiler:2.42'
     implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
 
+    // joda time library for dealing with time
+    implementation 'joda-time:joda-time:2.10.14'
+    //gms location services
+    implementation "com.google.android.gms:play-services-location:21.0.1"
+
+    // Location Services
 }

@@ -1,5 +1,8 @@
 package com.kev.weatherapp.di
 
+import android.app.Application
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.kev.weatherapp.data.remote.WeatherApiService
 import com.kev.weatherapp.data.repository.WeatherRepositoryImpl
 import com.kev.weatherapp.domain.repository.WeatherRepository
@@ -53,6 +56,12 @@ object WeatherModule {
 	@Singleton
 	fun providesWeatherRepository(apiService: WeatherApiService) : WeatherRepository{
 		return WeatherRepositoryImpl(apiService)
+	}
+
+	@Provides
+	@Singleton
+	fun providesFusedLocationProvider(app:Application) : FusedLocationProviderClient{
+		return LocationServices.getFusedLocationProviderClient(app)
 	}
 
 }
