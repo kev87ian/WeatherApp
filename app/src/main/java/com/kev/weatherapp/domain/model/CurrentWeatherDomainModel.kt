@@ -2,7 +2,7 @@ package com.kev.weatherapp.domain.model
 
 import com.kev.weatherapp.data.dto.Condition
 
-data class WeatherDomainModel(
+data class CurrentWeatherDomainModel(
 	val tempC: Double,
 	val condition: Condition,
 	val isDay: Int,

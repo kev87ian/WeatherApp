@@ -1,6 +1,7 @@
 package com.kev.weatherapp.data.repository
 
 import com.kev.weatherapp.BuildConfig
+import com.kev.weatherapp.data.dto.CurrentWeatherDto
 import com.kev.weatherapp.data.dto.WeatherDto
 import com.kev.weatherapp.data.remote.WeatherApiService
 import com.kev.weatherapp.domain.repository.WeatherRepository
@@ -10,7 +11,7 @@ class WeatherRepositoryImpl @Inject constructor(
 	private val apiService: WeatherApiService
 ) : WeatherRepository {
 
-	override suspend fun fetchCurrentWeatherDetails(location: String): WeatherDto {
+	override suspend fun fetchCurrentWeatherDetails(location: String): CurrentWeatherDto {
 		return apiService.fetchCurrentWeatherDetails(BuildConfig.API_KEY, location)
 	}
 
