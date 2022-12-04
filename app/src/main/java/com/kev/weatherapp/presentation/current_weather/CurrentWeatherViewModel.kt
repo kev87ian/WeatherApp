@@ -1,11 +1,6 @@
 package com.kev.weatherapp.presentation.current_weather
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.bumptech.glide.Glide.init
-import com.kev.weatherapp.domain.location.LocationTracker
+import androidx.lifecycle.*
 import com.kev.weatherapp.domain.model.CurrentWeatherDomainModel
 import com.kev.weatherapp.domain.use_case.current_weather_usecase.GetCurrentWeatherUseCase
 import com.kev.weatherapp.util.Resource
@@ -16,8 +11,9 @@ import javax.inject.Inject
 @HiltViewModel
 class CurrentWeatherViewModel @Inject constructor(
 	private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
-	private val locationTracker: LocationTracker
-) : ViewModel() {
+
+
+	) : ViewModel() {
 
 
 	private val _currentWeatherLiveData = MutableLiveData<Resource<CurrentWeatherDomainModel>>()
@@ -25,37 +21,30 @@ class CurrentWeatherViewModel @Inject constructor(
 		_currentWeatherLiveData
 
 
-	private val _locationPermissionObservable = MutableLiveData<String>()
-	val locationPermissionObservable: LiveData<String> = _locationPermissionObservable
+	fun getCurrentWeather(location:String) = viewModelScope.launch {
 
 
-	fun fetchCurrentWeather() = viewModelScope.launch {
-	/*	locationTracker.getCurrentLocation()?.let { location ->
+		when (val result = getCurrentWeatherUseCase.fetchCurrentWeather(location)) {
+			is Resource.Error -> {
 
-			getCurrentWeatherUseCase.fetchCurrentWeather(location.latitude.toString().plus(location.longitude)).collect{
-				_currentWeatherLiveData.postValue(it)
+				_currentWeatherLiveData.postValue(
+					Resource.Error(
+						result.message ?: "VM level error handling"
+					)
+				)
 			}
-		}?: kotlin.run {
-			_locationPermissionObservable.postValue("Ensure you have granted gps permission")
-		}*/
 
-		val latitude = locationTracker.getCurrentLocation()?.latitude.toString()
-		val longitude = locationTracker.getCurrentLocation()?.longitude.toString()
-
-		if (longitude.isNotEmpty()||latitude.isNotEmpty()){
-			getCurrentWeatherUseCase.fetchCurrentWeather(latitude.plus(",".plus(longitude))).collect{
-				_currentWeatherLiveData.postValue(it)
+			is Resource.Loading -> {
+				_currentWeatherLiveData.postValue(Resource.Loading())
 			}
-		}
 
-		else{
-			_locationPermissionObservable.postValue("Hauna permission za net")
+			is Resource.Success -> {
+				_currentWeatherLiveData.postValue(Resource.Success(result.data!!))
+			}
 		}
 
 	}
 
 
-	init {
-		fetchCurrentWeather()
-	}
+
 }

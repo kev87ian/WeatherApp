@@ -1,37 +1,36 @@
 package com.kev.weatherapp.domain.use_case.current_weather_usecase
 
 import com.kev.weatherapp.data.dto.toWeatherDomainModel
+import com.kev.weatherapp.domain.location.LocationTracker
 import com.kev.weatherapp.domain.model.CurrentWeatherDomainModel
 import com.kev.weatherapp.domain.repository.WeatherRepository
 import com.kev.weatherapp.util.Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
 class GetCurrentWeatherUseCase @Inject constructor(
-	private val repository: WeatherRepository
+	private val repository: WeatherRepository,
 ) {
 
-	suspend fun fetchCurrentWeather(location: String): Flow<Resource<CurrentWeatherDomainModel>> {
-		return flow {
-			emit(Resource.Loading())
-			val currentWeatherData = repository.fetchCurrentWeatherDetails(location).toWeatherDomainModel()
-			emit(Resource.Success(currentWeatherData))
-		}.flowOn(Dispatchers.IO).catch { e ->
+	suspend fun fetchCurrentWeather(location:String): Resource<CurrentWeatherDomainModel> {
+		return try {
+				Resource.Loading<CurrentWeatherDomainModel>()
+				delay(6000)
+				val weatherData = repository.fetchCurrentWeatherDetails(location).toWeatherDomainModel()
+				Resource.Success(weatherData)
+
+		} catch (e: Exception) {
 			e.printStackTrace()
-
 			when (e) {
-				is IOException -> emit(Resource.Error("No internet connection"))
-				is HttpException -> emit(Resource.Error("Could not reach server. Please retry."))
-				else -> emit(Resource.Error(e.localizedMessage!!))
+				is IOException -> Resource.Error("No internet connection")
+				is HttpException -> Resource.Error("Couldn't reach server")
+				else -> Resource.Error(e.localizedMessage!!)
 			}
-
 		}
 
+
 	}
+
 }
