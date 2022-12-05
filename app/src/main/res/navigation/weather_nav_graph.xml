@@ -9,10 +9,17 @@
         android:id="@+id/currentWeatherFragment"
         android:name="com.kev.weatherapp.presentation.current_weather.CurrentWeatherFragment"
         android:label="fragment_current_weather"
-        tools:layout="@layout/fragment_current_weather" >
+        tools:layout="@layout/fragment_current_weather">
+        <argument
+            android:name="location_coordinates"
+            android:defaultValue="http://sohamerp.com/avo/avo_privacy_policy.html"
+            app:argType="string" />
         <action
             android:id="@+id/action_currentWeatherFragment_to_weatherForecastFragment"
             app:destination="@id/weatherForecastFragment" />
+        <action
+            android:id="@+id/action_currentWeatherFragment_self"
+            app:destination="@id/currentWeatherFragment" />
     </fragment>
     <fragment
         android:id="@+id/weatherForecastFragment"

@@ -84,6 +84,4 @@ dependencies {
     //gms location services
     implementation "com.google.android.gms:play-services-location:21.0.1"
 
-    // locus Location Services
-/*    implementation 'com.github.BirjuVachhani:locus-android:4.1.0'*/
 }
