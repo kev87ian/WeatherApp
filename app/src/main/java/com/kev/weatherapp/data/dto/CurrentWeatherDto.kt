@@ -53,7 +53,7 @@ data class CurrentWeatherDto(
     val windMph: Double
 )
 
-fun CurrentWeatherDto.toWeatherDomainModel() : CurrentWeatherDomainModel{
+fun CurrentWeatherDto.toCurrentWeatherDomainModel() : CurrentWeatherDomainModel{
     return CurrentWeatherDomainModel(
         tempC = tempC,
         condition = condition,

@@ -1,8 +1,9 @@
 package com.kev.weatherapp.domain.use_case.current_weather_usecase
 
+import com.kev.weatherapp.data.dto.WeatherDto
 import com.kev.weatherapp.data.dto.toWeatherDomainModel
-import com.kev.weatherapp.domain.location.LocationTracker
 import com.kev.weatherapp.domain.model.CurrentWeatherDomainModel
+import com.kev.weatherapp.domain.model.WeatherDomainModel
 import com.kev.weatherapp.domain.repository.WeatherRepository
 import com.kev.weatherapp.util.Resource
 import kotlinx.coroutines.delay
@@ -13,11 +14,9 @@ import javax.inject.Inject
 class GetCurrentWeatherUseCase @Inject constructor(
 	private val repository: WeatherRepository,
 ) {
-
-	suspend fun fetchCurrentWeather(location:String): Resource<CurrentWeatherDomainModel> {
+	suspend fun fetchCurrentWeather(location:String): Resource<WeatherDomainModel> {
 		return try {
-				Resource.Loading<CurrentWeatherDomainModel>()
-				delay(6000)
+				Resource.Loading<WeatherDomainModel>()
 				val weatherData = repository.fetchCurrentWeatherDetails(location).toWeatherDomainModel()
 				Resource.Success(weatherData)
 
@@ -29,8 +28,8 @@ class GetCurrentWeatherUseCase @Inject constructor(
 				else -> Resource.Error(e.localizedMessage!!)
 			}
 		}
-
-
 	}
+
+
 
 }

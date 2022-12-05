@@ -11,7 +11,7 @@ class WeatherRepositoryImpl @Inject constructor(
 	private val apiService: WeatherApiService
 ) : WeatherRepository {
 
-	override suspend fun fetchCurrentWeatherDetails(location: String): CurrentWeatherDto {
+	override suspend fun fetchCurrentWeatherDetails(location: String): WeatherDto {
 		return apiService.fetchCurrentWeatherDetails(BuildConfig.API_KEY, location)
 	}
 

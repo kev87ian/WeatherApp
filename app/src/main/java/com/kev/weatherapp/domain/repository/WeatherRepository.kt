@@ -5,7 +5,7 @@ import com.kev.weatherapp.data.dto.WeatherDto
 
 interface WeatherRepository {
 
-	suspend fun fetchCurrentWeatherDetails(location:String) : CurrentWeatherDto
+	suspend fun fetchCurrentWeatherDetails(location:String) : WeatherDto
 	suspend fun fetchWeatherForecast(location: String):WeatherDto
 
 }

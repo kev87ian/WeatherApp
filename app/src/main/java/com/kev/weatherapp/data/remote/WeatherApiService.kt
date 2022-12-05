@@ -15,7 +15,7 @@ interface WeatherApiService {
 
 		@Query("days") numberOfDays: Int = 1
 
-	) : CurrentWeatherDto
+	) : WeatherDto
 
 	@GET("forecast.json")
 	suspend fun fetchWeatherForecast(
