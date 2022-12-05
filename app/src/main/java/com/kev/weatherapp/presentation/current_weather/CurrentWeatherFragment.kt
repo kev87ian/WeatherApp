@@ -73,7 +73,8 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 
 
 
-	private fun observeUiState(){
+	//updates the ui depending on the api's response
+	private fun updateUiState(){
 
 		viewModel.currentWeatherLiveData.observe(viewLifecycleOwner){state->
 
@@ -90,7 +91,6 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 				}
 
 				is Resource.Loading->{
-					Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
 				}
 			}
 
@@ -131,13 +131,24 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 			.addOnCompleteListener{task->
 				val location = task.result
 
-			viewModel.getCurrentWeather(location.latitude.toString().plus(",").plus(location.longitude.toString()))
+
+					//handling cases where the location values are null
+
+				if (location != null){
+					viewModel.getCurrentWeather(location.latitude.toString().plus(",").plus(location.longitude.toString()))
+				}
+
+				else {
+					Toast.makeText(requireContext(), "Couldn't get your location. Please retry", Toast.LENGTH_SHORT).show()
+				}
+
+
 
 			}
 
 			.addOnFailureListener {
 				Log.e("Location error", it.message!!)
-				Toast.makeText(requireContext(), "Couldn't get your location. Please retry", Toast.LENGTH_SHORT).show()
+				Toast.makeText(requireContext(), it.localizedMessage!!, Toast.LENGTH_SHORT).show()
 			}
 
 

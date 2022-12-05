@@ -26,7 +26,6 @@ class CurrentWeatherViewModel @Inject constructor(
 
 		when (val result = getCurrentWeatherUseCase.fetchCurrentWeather(location)) {
 			is Resource.Error -> {
-
 				_currentWeatherLiveData.postValue(
 					Resource.Error(
 						result.message ?: "VM level error handling"

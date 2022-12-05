@@ -20,7 +20,7 @@ interface WeatherApiService {
 	@GET("forecast.json")
 	suspend fun fetchWeatherForecast(
 		@Query("key") apiKey : String,
-		@Query("q") location: String,
+		@Query("q", encoded = true) location: String,
 		@Query("days") numberOfDays: Int = 5
 
 	) : WeatherDto
