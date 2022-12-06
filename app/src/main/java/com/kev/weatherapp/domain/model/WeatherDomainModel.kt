@@ -5,7 +5,7 @@ import com.kev.weatherapp.data.dto.Location
 
 
 
-data class WeatherDomainModel(
+data class  WeatherDomainModel(
 	val current: CurrentWeatherDomainModel?,
 	val forecast: Forecast?,
 	val location: Location?

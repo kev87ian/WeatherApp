@@ -1,14 +1,17 @@
 package com.kev.weatherapp.presentation.current_weather
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.LocationRequest
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,6 +23,16 @@ import com.kev.weatherapp.databinding.FragmentCurrentWeatherBinding
 import com.kev.weatherapp.domain.model.WeatherDomainModel
 import com.kev.weatherapp.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import java.security.Timestamp
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.time.Duration.Companion.hours
 
 
 // The request code used in the request for location permissions
@@ -51,34 +64,9 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 		_binding = FragmentCurrentWeatherBinding.inflate(inflater, container, false)
 		return binding.root
 	}
-	override fun onStart() {
-		super.onStart()
-		// Check if the app has location permissions
-		if (ActivityCompat.checkSelfPermission(
-				requireContext(),
-				Manifest.permission.ACCESS_FINE_LOCATION
-			) != PackageManager.PERMISSION_GRANTED &&
-			ActivityCompat.checkSelfPermission(
-				requireContext(),
-				Manifest.permission.ACCESS_COARSE_LOCATION
-			) != PackageManager.PERMISSION_GRANTED
-		) {
-
-			// Request location permissions from the user
-			requestPermissions(
-				arrayOf(
-					Manifest.permission.ACCESS_FINE_LOCATION,
-					Manifest.permission.ACCESS_COARSE_LOCATION
-				),
-				LOCATION_PERMISSION_REQUEST_CODE
-			)
-		} else {
-			// If the app already has location permissions, start getting the user's location
-			startGettingLocation()
-		}
-	}
 
 
+	@RequiresApi(Build.VERSION_CODES.O)
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		updateUiState()
@@ -87,23 +75,19 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 
 
 	//updates the ui depending on the api's response
+	@RequiresApi(Build.VERSION_CODES.O)
 	private fun updateUiState() {
-
-
-
-	viewModel.currentWeatherLiveData.observe(viewLifecycleOwner) { state ->
+		viewModel.currentWeatherLiveData.observe(viewLifecycleOwner) { state ->
 
 			when (state) {
 				is Resource.Loading -> {
 					binding.progressBar.visibility = View.VISIBLE
-
 					binding.errorTextview.visibility = View.GONE
-					}
+				}
 				is Resource.Success -> {
 
 					binding.progressBar.visibility = View.GONE
 					binding.views.visibility = View.VISIBLE
-					Toast.makeText(requireContext(), state.data?.location?.name.toString(), Toast.LENGTH_SHORT).show()
 					state.data.apply {
 						bindUi(this!!)
 					}
@@ -115,19 +99,56 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 					binding.errorTextview.text = state.message
 				}
 
-
 			}
 
 		}
 
 	}
 
+	//binds the Ui response to views
+
+
+	@SuppressLint("SimpleDateFormat")
 	private fun bindUi(weatherDomainModel: WeatherDomainModel) {
 
-		binding.locationNameTextview.text = weatherDomainModel.location?.name
-		binding.textviewFeelsLike.text = "Feels like ".plus(weatherDomainModel.current?.feelsLikeC)
-	}
 
+			var formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
+			var date: Date? = null
+			try {
+				date = formatter.parse(weatherDomainModel.current?.lastUpdate.toString())
+			} catch (e: ParseException) {
+				// TODO Auto-generated catch block
+				e.printStackTrace()
+			}
+			formatter = SimpleDateFormat("dd-MMM-yyyy HH:mm")
+
+		//	System.out.println("Date :" + formatter.format(date!!))
+
+
+		binding.apply {
+			locationNameTextview.text = weatherDomainModel.location?.name
+			textviewFeelsLike.text = "Feels like ".plus(weatherDomainModel.current?.feelsLikeC).plus("\u00B0")
+			conditionText.text = weatherDomainModel.current?.condition?.text
+			windspeedTextview.text = weatherDomainModel.current?.windKph.toString().plus("km/h")
+			timeLastUpdated.text = "Last update: ".plus(formatter.format(date!!))
+			temperatureTextview.text = weatherDomainModel.current?.tempC.toString().plus("\u00B0")
+		}
+
+/*		binding.locationNameTextview.text = weatherDomainModel.location?.name
+		binding.textviewFeelsLike.text =
+			"Feels like ".plus(weatherDomainModel.current?.feelsLikeC).plus("°")
+		binding.temperatureTextview.text =
+			weatherDomainModel.current?.tempC.toString().plus("\u00B0")
+		binding.conditionText.text = weatherDomainModel.current?.condition?.text
+		binding.timeLastUpdated.text = weatherDomainModel.current?.lastUpdate
+		binding.windspeedTextview.text =
+			weatherDomainModel.current?.windKph.toString().plus(" km/h")
+
+
+		val unixTime = System.currentTimeMillis()*/
+
+
+	}
 
 	// gets user's location, and makes the api call with the values
 	private fun startGettingLocation() {
@@ -167,7 +188,7 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 				} else {
 					Toast.makeText(
 						requireContext(),
-						"Couldn't get your location. Please retry",
+						"Couldn't get your location. Please ensure you have granted location permission.",
 						Toast.LENGTH_SHORT
 					).show()
 				}
@@ -184,7 +205,7 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 	}
 
 
-
+	@Deprecated("Deprecated in Java")
 	override fun onRequestPermissionsResult(
 		requestCode: Int,
 		permissions: Array<String>,
@@ -207,6 +228,32 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 	}
 
 
+	override fun onStart() {
+		super.onStart()
+		// Check if the app has location permissions
+		if (ActivityCompat.checkSelfPermission(
+				requireContext(),
+				Manifest.permission.ACCESS_FINE_LOCATION
+			) != PackageManager.PERMISSION_GRANTED &&
+			ActivityCompat.checkSelfPermission(
+				requireContext(),
+				Manifest.permission.ACCESS_COARSE_LOCATION
+			) != PackageManager.PERMISSION_GRANTED
+		) {
+
+			// Request location permissions from the user
+			requestPermissions(
+				arrayOf(
+					Manifest.permission.ACCESS_FINE_LOCATION,
+					Manifest.permission.ACCESS_COARSE_LOCATION
+				),
+				LOCATION_PERMISSION_REQUEST_CODE
+			)
+		} else {
+			// If the app already has location permissions, start getting the user's location
+			startGettingLocation()
+		}
+	}
 
 
 	override fun onDestroy() {

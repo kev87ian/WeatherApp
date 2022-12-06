@@ -60,6 +60,8 @@ fun CurrentWeatherDto.toCurrentWeatherDomainModel() : CurrentWeatherDomainModel{
         isDay = isDay,
         humidity = humidity,
         windKph = windKph,
-        feelsLikeC = feelslikeC
+        feelsLikeC = feelslikeC,
+        lastUpdate = lastUpdated,
+        lastUpdatedEpoch = lastUpdatedEpoch
     )
 }

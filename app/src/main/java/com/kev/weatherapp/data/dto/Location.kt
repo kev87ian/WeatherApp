@@ -2,6 +2,9 @@ package com.kev.weatherapp.data.dto
 
 
 import com.google.gson.annotations.SerializedName
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 data class Location(
     @SerializedName("country")
@@ -21,3 +24,6 @@ data class Location(
     @SerializedName("tz_id")
     val tzId: String
 )
+
+
+

@@ -8,6 +8,8 @@ data class CurrentWeatherDomainModel(
 	val isDay: Int?,
 	val humidity: Int?,
 	val windKph: Double?,
-	val feelsLikeC:Double?
+	val feelsLikeC:Double?,
+	val lastUpdate:String?,
+	val lastUpdatedEpoch:Int
 )
 
