@@ -16,7 +16,7 @@ class TodaysWeatherViewModel @Inject constructor(
 ) : ViewModel() {
 
 	private val _dataState = MutableLiveData<CurrentWeatherStateUiClass>()
-	 val dataSTate: LiveData<CurrentWeatherStateUiClass> get() = _dataState
+	 val dataState: LiveData<CurrentWeatherStateUiClass> get() = _dataState
 
 
 

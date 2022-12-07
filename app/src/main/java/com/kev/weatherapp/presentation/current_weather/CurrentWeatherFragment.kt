@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -42,10 +43,18 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 
 	private val viewModel: TodaysWeatherViewModel by viewModels()
 
+	private lateinit var todaysWeatherAdapter: TodaysWeatherAdapter
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+		todaysWeatherAdapter = TodaysWeatherAdapter()
+		binding.recycleview.apply {
+			adapter = todaysWeatherAdapter
+			layoutManager =
+				LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+		}
 		startGettingLocation()
 		observeDataChanges()
 	}
@@ -60,7 +69,8 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 	}
 
 	private fun observeDataChanges() {
-		viewModel.dataSTate.observe(viewLifecycleOwner) { state ->
+
+		viewModel.dataState.observe(viewLifecycleOwner) { state ->
 
 			if (state.isLoading) {
 				//progress bar is visible
@@ -75,9 +85,25 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 
 				binding.errorTextview.visibility = View.GONE
 				binding.progressBar.visibility = View.GONE
+
+
+				state.weatherInfo.apply {
+					binding.locationNameTextview.text = this.location.name
+				}
+				//bind the views with the uI response
 				state.weatherInfo.currentDto.let {
 					bindUi(it)
 				}
+
+				//assign the hours to adapter
+				state.weatherInfo.forecast.forecastday.apply {
+
+					for (i in this){
+						todaysWeatherAdapter.differ.submitList(i.hour)
+					}
+				}
+
+
 			}
 
 		}
@@ -97,7 +123,8 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 		formatter = SimpleDateFormat("dd-MMM-yyyy HH:mm")
 		binding.apply {
 			temperatureTextview.text = currentDto.tempC.toString().plus("\u00B0")
-			textviewFeelsLike.text = "Feels like ".plus(currentDto.feelslikeC.toString().plus("\u00B0"))
+			textviewFeelsLike.text =
+				"Feels like ".plus(currentDto.feelslikeC.toString().plus("\u00B0"))
 			timeLastUpdated.text = "Last updated: ".plus(formatter.format(date!!))
 			windspeedTextview.text = currentDto.windKph.toString().plus("km/h")
 			conditionText.text = currentDto.condition.text
