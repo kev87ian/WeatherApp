@@ -1,38 +1,6 @@
 package com.kev.weatherapp.presentation.current_weather
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.pm.PackageManager
-import android.location.LocationRequest
-import android.os.Build
-import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.CancellationTokenSource
-import com.kev.weatherapp.R
-import com.kev.weatherapp.databinding.FragmentCurrentWeatherBinding
-import com.kev.weatherapp.domain.model.WeatherDomainModel
-import com.kev.weatherapp.util.Resource
-import dagger.hilt.android.AndroidEntryPoint
-import java.security.Timestamp
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
-import kotlin.time.Duration.Companion.hours
+/*
 
 
 // The request code used in the request for location permissions
@@ -44,6 +12,8 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 	private val binding get() = _binding!!
 
 	private val viewModel: CurrentWeatherViewModel by viewModels()
+
+	private lateinit var todayForecastAdapter: TodayWeatherForecastAdapter
 
 	// The FusedLocationProviderClient that provides location updates
 	private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -66,16 +36,21 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 	}
 
 
-	@RequiresApi(Build.VERSION_CODES.O)
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+
+		//init adapter
+		todayForecastAdapter = TodayWeatherForecastAdapter()
+
 		updateUiState()
+
 		startGettingLocation()
 	}
 
 
 	//updates the ui depending on the api's response
-	@RequiresApi(Build.VERSION_CODES.O)
+
 	private fun updateUiState() {
 		viewModel.currentWeatherLiveData.observe(viewLifecycleOwner) { state ->
 
@@ -90,6 +65,11 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 					binding.views.visibility = View.VISIBLE
 					state.data.apply {
 						bindUi(this!!)
+					*/
+/*	get24HourWeatherForecast(this.forecast!!)*//*
+
+					//get24HourWeatherForecast(state.data?.forecast!!)
+
 					}
 				}
 
@@ -105,22 +85,50 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 
 	}
 
+	private fun get24HourWeatherForecast(forecast: Forecast) {
+
+		binding.recycleview.apply {
+			adapter = todayForecastAdapter
+			layoutManager =  LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+		}
+
+		viewModel.currentWeatherLiveData.observe(viewLifecycleOwner){state->
+			when(state){
+				is Resource.Loading->{
+
+				}
+
+				is Resource.Success->{
+
+					todayForecastAdapter.differ.submitList(state.data?.forecast?.forecastday)
+
+				}
+			}
+
+		}
+
+
+
+	}
+
+
+	//the 24 hour weather forecast
+
+
 	//binds the Ui response to views
-
-
 	@SuppressLint("SimpleDateFormat")
 	private fun bindUi(weatherDomainModel: WeatherDomainModel) {
 
 
-			var formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
-			var date: Date? = null
-			try {
-				date = formatter.parse(weatherDomainModel.current?.lastUpdate.toString())
-			} catch (e: ParseException) {
-				// TODO Auto-generated catch block
-				e.printStackTrace()
-			}
-			formatter = SimpleDateFormat("dd-MMM-yyyy HH:mm")
+		var formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
+		var date: Date? = null
+		try {
+			date = formatter.parse(weatherDomainModel.current?.lastUpdate.toString())
+		} catch (e: ParseException) {
+			// TODO Auto-generated catch block
+			e.printStackTrace()
+		}
+		formatter = SimpleDateFormat("dd-MMM-yyyy HH:mm")
 
 		//	System.out.println("Date :" + formatter.format(date!!))
 
@@ -133,20 +141,6 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 			timeLastUpdated.text = "Last update: ".plus(formatter.format(date!!))
 			temperatureTextview.text = weatherDomainModel.current?.tempC.toString().plus("\u00B0")
 		}
-
-/*		binding.locationNameTextview.text = weatherDomainModel.location?.name
-		binding.textviewFeelsLike.text =
-			"Feels like ".plus(weatherDomainModel.current?.feelsLikeC).plus("°")
-		binding.temperatureTextview.text =
-			weatherDomainModel.current?.tempC.toString().plus("\u00B0")
-		binding.conditionText.text = weatherDomainModel.current?.condition?.text
-		binding.timeLastUpdated.text = weatherDomainModel.current?.lastUpdate
-		binding.windspeedTextview.text =
-			weatherDomainModel.current?.windKph.toString().plus(" km/h")
-
-
-		val unixTime = System.currentTimeMillis()*/
-
 
 	}
 
@@ -260,4 +254,4 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 		super.onDestroy()
 		_binding = null
 	}
-}
+}*/
