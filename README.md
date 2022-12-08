@@ -25,6 +25,7 @@
 - [Material Components for Android](https://github.com/material-components/material-components-android) - Modular and customizable Material Design UI components for Android.
 - [Retrofit](https://square.github.io/retrofit/) - To make network calls.
 
+## License 
 ```
 Copyright 2022 The Android Open Source Project
 
