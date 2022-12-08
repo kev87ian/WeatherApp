@@ -30,7 +30,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
     }
 }
@@ -44,7 +44,6 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
-
 
 
     // Architectural Components
@@ -70,13 +69,14 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
     implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
 
-    //glide
-    implementation 'com.github.bumptech.glide:glide:4.14.2'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
 
     // hilt
     implementation 'com.google.dagger:hilt-android:2.42'
     kapt 'com.google.dagger:hilt-compiler:2.42'
     implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
+
+    //gms location services
+    implementation "com.google.android.gms:play-services-location:21.0.1"
+   
 
 }
