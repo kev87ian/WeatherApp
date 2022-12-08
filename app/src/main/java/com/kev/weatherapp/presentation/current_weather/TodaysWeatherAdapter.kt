@@ -6,9 +6,13 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.kev.weatherapp.R
 import com.kev.weatherapp.data.dto.Hour
 import com.kev.weatherapp.databinding.TodayForecastLayoutItemBinding
 import com.kev.weatherapp.util.WeatherCondition
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TodaysWeatherAdapter : RecyclerView.Adapter<TodaysWeatherAdapter.WeatherViewHolder>() {
 
@@ -26,38 +30,48 @@ class TodaysWeatherAdapter : RecyclerView.Adapter<TodaysWeatherAdapter.WeatherVi
 
 	override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
 
-		val listOfHours = differ.currentList
+		val singleHour = differ.currentList[position]
 
-		//val listOfHours = listOf<Hour>()
+		var formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
+		var date: Date? = null
+		try {
+			date = formatter.parse(singleHour.time)
+		} catch (e: ParseException) {
+			// TODO Auto-generated catch block
+			e.printStackTrace()
+		}
+		formatter = SimpleDateFormat("dd-MMM-yyyy HH:mm")
+
+		//removing the backslash that precede the icon url
+		var url = singleHour.condition.icon
+		val str2 = "//"
+		val result = url.startsWith(str2)
+
+
 		with(holder) {
-
 			binding.apply {
 
-				for (hour in listOfHours) {
-					hourTv.text = hour.time
-					temperatureTextview.text = hour.tempC.toString()
-					imageview.setImageDrawable(WeatherCondition.weatherPrediction(hour.condition.code).iconRes.toDrawable())
+				val x = WeatherCondition.weatherPrediction(singleHour.condition.code)
+				hourTv.text = singleHour.time
+				temperatureTextview.text = singleHour.tempC.toString().plus("°")
 
+
+				x.let {
+					condtionTextview.text = it.weatherDesc
+					imageview.setImageResource(x.iconRes)
 				}
+
+
+
 			}
+
+
 		}
-
 	}
-
 
 	override fun getItemCount(): Int {
 		return differ.currentList.size
 	}
-
-/*	private val diffUtil = object : DiffUtil.ItemCallback<Forecastday>() {
-		override fun areItemsTheSame(oldItem: Forecastday, newItem: Forecastday): Boolean {
-			return oldItem.date == newItem.date
-		}
-
-		override fun areContentsTheSame(oldItem: Forecastday, newItem: Forecastday): Boolean {
-			return oldItem == newItem
-		}
-	}*/
 
 	private val diffUtil = object : DiffUtil.ItemCallback<Hour>() {
 		override fun areItemsTheSame(oldItem: Hour, newItem: Hour): Boolean {

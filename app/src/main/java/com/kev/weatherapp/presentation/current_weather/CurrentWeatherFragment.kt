@@ -93,16 +93,18 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 				//bind the views with the uI response
 				state.weatherInfo.currentDto.let {
 					bindUi(it)
+
 				}
 
-				//assign the hours to adapter
+				//this attaches the day's hourly forecast to the adapter
+				//TODO: Find a way to un-spaghetti this particular block
 				state.weatherInfo.forecast.forecastday.apply {
-
-					for (i in this){
-						todaysWeatherAdapter.differ.submitList(i.hour)
+					this.forEach {
+						it.hour.apply {
+							todaysWeatherAdapter.differ.submitList(this)
+						}
 					}
 				}
-
 
 			}
 
@@ -112,20 +114,17 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 	@SuppressLint("SimpleDateFormat")
 	private fun bindUi(currentDto: CurrentDto) {
 		//handling time conversion
-		var formatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
-		var date: Date? = null
-		try {
-			date = formatter.parse(currentDto.lastUpdated)
-		} catch (e: ParseException) {
-			// TODO Auto-generated catch block
-			e.printStackTrace()
-		}
-		formatter = SimpleDateFormat("dd-MMM-yyyy HH:mm")
+
+		var format = SimpleDateFormat("yyyy-mm-dd HH:mm", Locale.getDefault())
+		val date = format.parse(currentDto.lastUpdated)
+		format = SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault())
+
+
 		binding.apply {
 			temperatureTextview.text = currentDto.tempC.toString().plus("\u00B0")
 			textviewFeelsLike.text =
 				"Feels like ".plus(currentDto.feelslikeC.toString().plus("\u00B0"))
-			timeLastUpdated.text = "Last updated: ".plus(formatter.format(date!!))
+			timeLastUpdated.text = "Last updated: ".plus(format.format(date!!))
 			windspeedTextview.text = currentDto.windKph.toString().plus("km/h")
 			conditionText.text = currentDto.condition.text
 
