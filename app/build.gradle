@@ -69,9 +69,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
     implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
 
-    //glide
-    implementation 'com.github.bumptech.glide:glide:4.14.2'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
+
     // hilt
     implementation 'com.google.dagger:hilt-android:2.42'
     kapt 'com.google.dagger:hilt-compiler:2.42'
@@ -79,7 +77,6 @@ dependencies {
 
     //gms location services
     implementation "com.google.android.gms:play-services-location:21.0.1"
-    //coil image-loading library
-    implementation("io.coil-kt:coil:2.2.2")
+   
 
 }
