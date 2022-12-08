@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationRequest
+import android.os.Binder
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -25,7 +26,6 @@ import com.kev.weatherapp.R
 import com.kev.weatherapp.data.dto.CurrentDto
 import com.kev.weatherapp.databinding.FragmentCurrentWeatherBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -73,16 +73,24 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 		viewModel.dataState.observe(viewLifecycleOwner) { state ->
 
 			if (state.isLoading) {
-				//progress bar is visible
-				Toast.makeText(requireContext(), "Loading", Toast.LENGTH_SHORT).show()
-			} else if (state.error != null) {
 
+				//progress bar is visible
+				binding.viewsRelativeLayout.visibility = View.GONE
+				binding.errorTextview.visibility = View.GONE
+
+			}
+
+
+			else if (state.error != null) {
+				binding.viewsRelativeLayout.visibility = View.GONE
 				binding.errorTextview.visibility = View.VISIBLE
 				binding.errorTextview.text = state.error.toString()
 				binding.progressBar.visibility = View.GONE
 				Toast.makeText(requireContext(), state.error.toString(), Toast.LENGTH_SHORT).show()
-			} else if (state.weatherInfo != null) {
+			}
 
+			else if (state.weatherInfo != null) {
+				binding.viewsRelativeLayout.visibility = View.VISIBLE
 				binding.errorTextview.visibility = View.GONE
 				binding.progressBar.visibility = View.GONE
 
@@ -99,11 +107,12 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
 				//this attaches the day's hourly forecast to the adapter
 				//TODO: Find a way to un-spaghetti this particular block
 				state.weatherInfo.forecast.forecastday.apply {
-					this.forEach {
+				this.forEach {
 						it.hour.apply {
 							todaysWeatherAdapter.differ.submitList(this)
 						}
 					}
+
 				}
 
 			}

@@ -15,23 +15,27 @@ class TodaysWeatherViewModel @Inject constructor(
 	private val useCase: GetTodayWeatherUseCase
 ) : ViewModel() {
 
-	private val _dataState = MutableLiveData<CurrentWeatherStateUiClass>()
-	 val dataState: LiveData<CurrentWeatherStateUiClass> get() = _dataState
+	private val _dataState = MutableLiveData<TodaysWeatherUIState>()
+	 val dataState: LiveData<TodaysWeatherUIState> get() = _dataState
 
 
 
 	fun getTodaysWeather(location:String) = viewModelScope.launch {
+		val state = TodaysWeatherUIState(isLoading = false, null, null)
 		when(val result = useCase.fetchTodayWeather(location)){
+
+
+
 			is Resource.Success ->{
-				_dataState.value = CurrentWeatherStateUiClass(weatherInfo = result.data!!)
+				_dataState.value = TodaysWeatherUIState(weatherInfo = result.data!!)
 			}
 
 			is Resource.Loading->{
-				_dataState.value = CurrentWeatherStateUiClass(isLoading = true, null, null)
+				_dataState.value = TodaysWeatherUIState(isLoading = true, null, null)
 			}
 
 			is Resource.Error->{
-				_dataState.value = CurrentWeatherStateUiClass(false, error = result.message ?: "An error occured", null)
+				_dataState.value = TodaysWeatherUIState(false, error = result.message ?: "An error occured", null)
 			}
 
 		}
