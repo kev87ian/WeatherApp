@@ -1,6 +1,7 @@
 ## Weather App
 - An android app that consumes the [Weather API](https://www.weatherapi.com/). It displays the current weather, and the day's forecast.
 - The gaol of the project was to practise the Model-view-Viewmodel pattern with clean architecture.
+- [UI was inspired by this design](https://dribbble.com/shots/17998271-Cuacane-Weather-App)
 
 ###  Get Started
 - Head on to - Go to https://www.weatherapi.com/
